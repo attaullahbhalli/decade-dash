@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Time Traveler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-purple: #1a0933;
+            --retro-yellow: #ffd700;
+            --grid-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(50px);
+            }
+        }
+
+        body {
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            background-color: var(--main-purple);
+            color: #fff;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, 
+                    var(--grid-color) 25%, 
+                    var(--grid-color) 26%, 
+                    transparent 27%, transparent 74%, 
+                    var(--grid-color) 75%, 
+                    var(--grid-color) 76%, 
+                    transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, 
+                    var(--grid-color) 25%, 
+                    var(--grid-color) 26%, 
+                    transparent 27%, transparent 74%, 
+                    var(--grid-color) 75%, 
+                    var(--grid-color) 76%, 
+                    transparent 77%, transparent);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            color: var(--retro-yellow);
+            text-shadow: 4px 4px 0px #000;
+            letter-spacing: 2px;
+        }
+
+        h3 {
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #fff;
+        }
+
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--retro-yellow);
+        }
+
+        .timer.warning {
+            color: #ff2b2b;
+        }
+
+        .start-btn {
+            font-family: 'Press Start 2P', cursive;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            background-color: var(--retro-yellow);
+            color: var(--main-purple);
+            border: none;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            margin-top: 2rem;
+        }
+
+        .line-one, .line-two {
+            display: flex;
+            gap: 30px;
+        }
+
+        .btn {
+            height: 180px;
+            width: 180px;
+            border: none;
+            border-radius: 15px;
+            margin: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .red {
+            background-color: #ff2b2b;
+        }
+
+        .blue {
+            background-color: #4d52ff;
+        }
+
+        .purple {
+            background-color: #c736ff;
+        }
+
+        .yellow {
+            background-color: #fff956;
+        }
+
+        .flash {
+            background-color: #fff;
+        }
+
+        .userflash {
+            background-color: #00ff00;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .visible {
+            display: inline-block;
+        }
+
+        @media (max-width: 610px) {
+            .btn {
+                height: 130px;
+                width: 130px;
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                text-shadow: 2px 2px 0px #000;
+            }
+            
+            h3 {
+                font-size: 0.8rem;
+                padding: 0 1rem;
+            }
+
+            .timer {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .btn {
+                height: 90px;
+                width: 90px;
+                margin: 7.5px;
+                border-radius: 8px;
+            }
+            
+            .line-one, .line-two {
+                gap: 15px;
+            }
+
+            .timer {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+    <div class="timer"></div>
+    <h1>SIMON SAYS</h1>
+    <h3>Press any key to start the game</h3>
+    <button class="start-btn">START</button>
+    <div class="btn-container">
+        <div class="line-one">
+            <div class="btn red" type="button" id="red"></div>
+            <div class="btn blue" type="button" id="blue"></div>
+        </div>
+        <div class="line-two">
+            <div class="btn purple" type="button" id="purple"></div>
+            <div class="btn yellow" type="button" id="yellow"></div>
+        </div>
+    </div>
+
+    <script>
+        let gameSeq = [];
+        let userSeq = [];
+        let btns = ["yellow", "red", "purple", "blue"];
+        let started = false;
+        let level = 0;
+        let timerInterval;
+        let timeLeft;
+
+        const h3 = document.querySelector("h3");
+        const startBtn = document.querySelector(".start-btn");
+        const timerDisplay = document.querySelector(".timer");
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 3;
+            timerDisplay.textContent = timeLeft;
+            timerDisplay.classList.remove('warning');
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 1) {
+                    timerDisplay.classList.add('warning');
+                }
+                
+                if (timeLeft < 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '';
+                    gameOver('Time\'s up!');
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = '';
+        }
+
+        function gameOver(message) {
+            const gameOverText = window.innerWidth < 610 
+                ? `${message}\nLevel ${level}\nPress Start to restart`
+                : `${message}\nLevel ${level}\nPress any key to restart`;
+            
+            h3.innerText = gameOverText;
+            
+            if (window.innerWidth < 610) {
+                displayStartBtn();
+            }
+            
+            document.body.style.backgroundColor = "red";
+            setTimeout(() => {
+                document.body.style.backgroundColor = "var(--main-purple)";
+            }, 200);
+            
+            reset();
+        }
+
+        function generateNewPattern(length) {
+            let newPattern = [];
+            for(let i = 0; i < length; i++) {
+                let randIndex = Math.floor(Math.random() * 4);
+                newPattern.push(btns[randIndex]);
+            }
+            return newPattern;
+        }
+
+        function flashSequence(sequence, index = 0) {
+            if (index >= sequence.length) {
+                setTimeout(() => startTimer(), 500);
+                return;
+            }
+            
+            const btn = document.querySelector(`.${sequence[index]}`);
+            const baseSpeed = 300;
+            const speedReduction = Math.min(200, level * 10);
+            const currentSpeed = Math.max(50, baseSpeed - speedReduction);
+            
+            setTimeout(() => {
+                gameFlash(btn);
+                setTimeout(() => flashSequence(sequence, index + 1), currentSpeed);
+            }, currentSpeed);
+        }
+
+        function checkWindowSize() {
+            if (window.innerWidth < 610) {
+                h3.innerText = `Click Start to start the Game`;
+            } else {
+                hiddenStartBtn();
+            }
+        }
+
+        window.addEventListener('resize', checkWindowSize);
+        checkWindowSize();
+
+        document.addEventListener("keypress", function() {
+            if (!started) {
+                started = true;
+                levelUp();
+            }
+        });
+
+        startBtn.addEventListener("click", function() {
+            if (!started) {
+                started = true;
+                hiddenStartBtn();
+                levelUp();
+            }
+        });
+
+        function hiddenStartBtn() {
+            startBtn.classList.remove('visible');
+            startBtn.classList.add('hidden');
+        }
+
+        function displayStartBtn() {
+            startBtn.classList.add('visible');
+            startBtn.classList.remove('hidden');
+        }
+
+        function gameFlash(btn) {
+            btn.classList.add("flash");
+            const flashDuration = Math.max(100, 250 - (level * 5));
+            setTimeout(() => {
+                btn.classList.remove("flash");
+            }, flashDuration);
+        }
+
+        function levelUp() {
+            stopTimer();
+            userSeq = [];
+            level++;
+            h3.innerText = `Level ${level}`;
+
+            gameSeq = generateNewPattern(level);
+            
+            const startDelay = Math.max(200, 600 - (level * 20));
+            setTimeout(() => flashSequence(gameSeq), startDelay);
+        }
+
+        function userFlash(btn) {
+            btn.classList.add("userflash");
+            setTimeout(() => {
+                btn.classList.remove("userflash");
+            }, 150);
+        }
+
+        function checkAns(idx) {
+            if (userSeq[idx] === gameSeq[idx]) {
+                if (userSeq.length === gameSeq.length) {
+                    stopTimer();
+                    const nextLevelDelay = Math.max(200, 500 - (level * 10));
+                    setTimeout(levelUp, nextLevelDelay);
+                }
+            } else {
+                gameOver('Wrong pattern!');
+            }
+        }
+
+        function btnPress() {
+            if (!started) return;
+            
+            if (userSeq.length === 0) {
+                stopTimer();
+            }
+            
+            const userColor = this.getAttribute("id");
+            userSeq.push(userColor);
+            userFlash(this);
+            checkAns(userSeq.length - 1);
+        }
+
+        const allBtns = document.querySelectorAll(".btn");
+        allBtns.forEach(btn => btn.addEventListener("click", btnPress));
+
+        function reset() {
+            stopTimer();
+            started = false;
+            level = 0;
+            gameSeq = [];
+            userSeq = [];
+        }
+    </script>
+</body>
+</html>

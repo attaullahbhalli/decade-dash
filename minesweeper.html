@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synthwave Minesweeper</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    :root {
+      --main-purple: #1a0933;  /* Background color */
+      --grid-color: rgba(255, 255, 255, 0.1);  /* Grid line color */
+  }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: var(--main-purple);
+      font-family: 'Press Start 2P', cursive;
+      color: #ff00de;
+      text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      background-color: #000000;
+      padding: 2px;
+      margin-top: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 222, 0.3);
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 5px currentColor;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cell.revealed {
+      background-color: #111111 !important;
+      color: #fff;
+      text-shadow: 0 0 5px currentColor;
+    }
+
+    .cell.mine {
+      background-color: #ff0000 !important;
+      color: #fff;
+      text-shadow: 0 0 5px #fff, 0 0 10px #ff0000;
+    }
+
+    .cell.flagged {
+      background-color: #ffcc00 !important;
+      color: #000;
+      text-shadow: none;
+    }
+    
+    #game-info {
+      margin: 20px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    button {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #1a1a1a;
+      color: #ff00de;
+      border: 1px solid #ff00de;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      text-shadow: 0 0 5px #ff00de;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 0, 222, 0.3);
+    }
+
+    button:hover {
+      background-color: #ff00de;
+      color: #1a1a1a;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>Synthwave Minesweeper</h1>
+  <div id="game-info">
+    Mines remaining: <span id="mine-count">10</span>
+  </div>
+  <button onclick="resetGame()">New Game</button>
+  <div id="game-board"></div>
+
+  <script>
+    const BOARD_SIZE = 10;
+    const MINE_COUNT = 10;
+    const gameBoard = document.getElementById('game-board');
+    const mineCountDisplay = document.getElementById('mine-count');
+    let gameOver = false;
+    let flaggedCount = 0;
+    let board;
+
+    function getRandomColor() {
+      const colors = [
+        '#ff00de', // pink
+        '#00ff9f', // cyan
+        '#ff6b6b', // coral
+        '#4d4dff', // blue
+        '#9f00ff', // purple
+        '#00ffff', // aqua
+        '#ff00ff', // magenta
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function resetGame() {
+      gameOver = false;
+      flaggedCount = 0;
+      mineCountDisplay.textContent = MINE_COUNT;
+      gameBoard.innerHTML = '';
+      board = initializeGame();
+    }
+
+    function initializeGame() {
+      const board = [];
+      for (let y = 0; y < BOARD_SIZE; y++) {
+        const row = [];
+        for (let x = 0; x < BOARD_SIZE; x++) {
+          row.push(Math.random() < MINE_COUNT / (BOARD_SIZE * BOARD_SIZE) ? 'mine' : null);
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          // Assign random color to each cell
+          cell.style.backgroundColor = getRandomColor();
+          // Add subtle glow effect based on the cell's color
+          cell.style.boxShadow = `0 0 10px ${cell.style.backgroundColor}`;
+          cell.addEventListener('click', revealCell);
+          cell.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            toggleFlag(event.target);
+          });
+          gameBoard.appendChild(cell);
+        }
+        board.push(row);
+      }
+      return board;
+    }
+
+    function revealCell(event) {
+      if (gameOver) return;
+
+      const cell = event.target;
+      if (cell.classList.contains('flagged') || cell.classList.contains('revealed')) return;
+      
+      const x = parseInt(cell.dataset.x);
+      const y = parseInt(cell.dataset.y);
+      
+      cell.classList.add('revealed');
+      if (board[y][x] === 'mine') {
+        cell.classList.add('mine');
+        gameOver = true;
+        revealAllMines();
+        setTimeout(() => alert('Game Over!'), 100);
+        return;
+      }
+
+      const mineCount = getMineCount(board, x, y);
+      cell.textContent = mineCount || '';
+      if (mineCount === 0) revealAdjacentCells(x, y);
+      checkWin();
+    }
+
+    function getMineCount(board, x, y) {
+      let count = 0;
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          const newX = x + i;
+          const newY = y + j;
+          if (newX >= 0 && newX < BOARD_SIZE && newY >= 0 && newY < BOARD_SIZE && board[newY][newX] === 'mine') {
+            count++;
+          }
+        }
+      }
+      return count;
+    }
+
+    function revealAdjacentCells(x, y) {
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          const newX = x + i;
+          const newY = y + j;
+          if (newX >= 0 && newX < BOARD_SIZE && newY >= 0 && newY < BOARD_SIZE) {
+            const neighborCell = gameBoard.children[(newY * BOARD_SIZE) + newX];
+            if (!neighborCell.classList.contains('revealed')) revealCell({ target: neighborCell });
+          }
+        }
+      }
+    }
+
+    function toggleFlag(cell) {
+      if (gameOver || cell.classList.contains('revealed')) return;
+      
+      if (cell.classList.contains('flagged')) {
+        cell.classList.remove('flagged');
+        flaggedCount--;
+      } else if (flaggedCount < MINE_COUNT) {
+        cell.classList.add('flagged');
+        flaggedCount++;
+      }
+      
+      mineCountDisplay.textContent = MINE_COUNT - flaggedCount;
+      checkWin();
+    }
+
+    function revealAllMines() {
+      [...gameBoard.children].forEach(cell => {
+        const x = parseInt(cell.dataset.x);
+        const y = parseInt(cell.dataset.y);
+        if (board[y][x] === 'mine') cell.classList.add('mine');
+      });
+    }
+
+    function checkWin() {
+      const allCells = [...gameBoard.children];
+      const correctFlags = allCells.every(cell => {
+        const x = parseInt(cell.dataset.x);
+        const y = parseInt(cell.dataset.y);
+        return (board[y][x] === 'mine') === cell.classList.contains('flagged');
+      });
+      
+      const allNonMinesRevealed = allCells.every(cell => {
+        const x = parseInt(cell.dataset.x);
+        const y = parseInt(cell.dataset.y);
+        return board[y][x] === 'mine' || cell.classList.contains('revealed');
+      });
+
+      if (correctFlags && allNonMinesRevealed) {
+        gameOver = true;
+        setTimeout(() => alert('Congratulations! You won!'), 100);
+      }
+    }
+
+    board = initializeGame();
+  </script>
+</body>
+</html>
