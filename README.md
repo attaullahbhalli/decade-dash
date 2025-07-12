@@ -46,9 +46,3 @@ As a Computer Science student and a casual video game enthusiast, I wanted to me
 - **CSS** — Styling and retro-themed UI  
 - **JavaScript** — Game logic and interactivity  
 - **Git** — For version control
-
----
-
-## 📸 Demo
-
-🎥 *Coming soon!*  
