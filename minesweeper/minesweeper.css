@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --main-purple: #1a0933;  /* Background color */
+  --grid-color: rgba(255, 255, 255, 0.1);  /* Grid line color */
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background: var(--main-purple);
+  font-family: 'Press Start 2P', cursive;
+  color: #ff00de;
+  text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de;
+}
+
+#game-board {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  gap: 2px;
+  background-color: #000000;
+  padding: 2px;
+  margin-top: 20px;
+  box-shadow: 0 0 20px rgba(255, 0, 222, 0.3);
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 5px currentColor;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cell.revealed {
+  background-color: #111111 !important;
+  color: #fff;
+  text-shadow: 0 0 5px currentColor;
+}
+
+.cell.mine {
+  background-color: #ff0000 !important;
+  color: #fff;
+  text-shadow: 0 0 5px #fff, 0 0 10px #ff0000;
+}
+
+.cell.flagged {
+  background-color: #ffcc00 !important;
+  color: #000;
+  text-shadow: none;
+}
+
+#game-info {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+button {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #1a1a1a;
+  color: #ff00de;
+  border: 1px solid #ff00de;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  text-shadow: 0 0 5px #ff00de;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 0, 222, 0.3);
+}
+
+button:hover {
+  background-color: #ff00de;
+  color: #1a1a1a;
+  transform: scale(1.05);
+}
