@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --main-purple: #1a0933;  /* Background color */
+  --grid-color: rgba(255, 255, 255, 0.1);  /* Grid line color */
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background: var(--main-purple);
+  font-family: 'Press Start 2P', sans-serif;
+  color: #fff;
+  position: relative;
+}
+
+#game-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  background: #000;
+  border: 5px solid #ff9900;
+  box-shadow: 0px 0px 30px rgba(255, 153, 0, 0.8);
+}
+
+.wall {
+  position: absolute;
+  background: #ff4500;
+  border: 1px solid #ff6500;
+  box-shadow: 0px 0px 8px rgba(255, 69, 0, 0.8);
+  z-index: 2;
+}
+
+.dots-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.cell {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  box-sizing: border-box;
+}
+
+.dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffeb3b;
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px rgba(255, 235, 59, 0.8);
+  left: 10.5px;
+  top: 10.5px;
+}
+
+#pacman {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #ffeb3b 70%, #e6c700);
+  border-radius: 50%;
+  box-shadow: 0px 0px 15px rgba(255, 235, 59, 0.8);
+  margin: 5px;
+  transition: transform 0.1s;
+  z-index: 3;
+}
+
+#ghost {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(to bottom, #ff5733 50%, #c70039 100%);
+  border-radius: 7.5px 7.5px 2.5px 2.5px;
+  box-shadow: 0px 0px 15px rgba(255, 87, 51, 0.8);
+  margin: 5px;
+  z-index: 3;
+}
+
+#ghost2 {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(to bottom, #33ff57 50%, #00c739 100%);
+  border-radius: 7.5px 7.5px 2.5px 2.5px;
+  box-shadow: 0px 0px 15px rgba(51, 255, 87, 0.8);
+  margin: 5px;
+  z-index: 3;
+}
+
+#ghost3 {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(to bottom, #3357ff 50%, #0039c7 100%);
+  border-radius: 7.5px 7.5px 2.5px 2.5px;
+  box-shadow: 0px 0px 15px rgba(51, 87, 255, 0.8);
+  margin: 5px;
+  z-index: 3;
+}
+
+#score {
+  font-size: 24px;
+  margin: 20px;
+  color: #ffeb3b;
+  text-shadow: 0px 0px 10px rgba(255, 235, 59, 0.8);
+}
+
+#game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64px;
+  font-weight: bold;
+  text-align: center;
+  color: #ff4500;
+  text-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+  animation: psychedelic 2s infinite alternate;
+  display: none;
+  z-index: 4;
+}
+
+@keyframes psychedelic {
+  0% { color: #ff0000; }
+  50% { color: #ff9900; }
+  100% { color: #ffeb3b; }
+}
+
+button {
+  font-size: 20px;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  background: #ff5733;
+  color: #fff;
+  border: 2px solid #ff4500;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(255, 87, 51, 0.8);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background: #ff6f4f;
+  box-shadow: 0px 0px 15px rgba(255, 111, 79, 0.8);
+}
+.grid-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+      linear-gradient(0deg, transparent 24%,
+          var(--grid-color) 25%,
+          var(--grid-color) 26%,
+          transparent 27%, transparent 74%,
+          var(--grid-color) 75%,
+          var(--grid-color) 76%,
+          transparent 77%, transparent),
+      linear-gradient(90deg, transparent 24%,
+          var(--grid-color) 25%,
+          var(--grid-color) 26%,
+          transparent 27%, transparent 74%,
+          var(--grid-color) 75%,
+          var(--grid-color) 76%,
+          transparent 77%, transparent);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  z-index: -1;
+}
+@keyframes gridMove {
+  0% {
+      transform: perspective(500px) rotateX(60deg) translateY(0);
+  }
+  100% {
+      transform: perspective(500px) rotateX(60deg) translateY(50px);
+  }
+}
