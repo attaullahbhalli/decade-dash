@@ -1,0 +1,327 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes floatClock {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px #ff4400,
+                   0 0 40px #ff6600,
+                   0 0 60px #ff8800,
+                   inset 0 0 20px #ff4400;
+    }
+    50% {
+        box-shadow: 0 0 30px #ff6600,
+                   0 0 60px #ff8800,
+                   0 0 90px #ffaa00,
+                   inset 0 0 30px #ff6600;
+    }
+}
+
+@keyframes rotateHand {
+    from { transform: translate(-50%, -100%) rotate(0deg); }
+    to { transform: translate(-50%, -100%) rotate(360deg); }
+}
+
+body {
+    background: linear-gradient(
+        45deg,
+        #ff0000,
+        #ff4400,
+        #ff6600,
+        #ff8800,
+        #ffaa00,
+        #ffcc00,
+        #ffee00
+    );
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: yellow;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.header {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    z-index: 1;
+}
+
+.header h1 {
+    background-color: rgba(0, 0, 0, 0.7);
+    display: inline-block;
+    padding: 20px 30px;
+    border: 4px solid #ff6600;
+    border-radius: 15px;
+    font-size: 1.5em;
+    color: #ffee00;
+    line-height: 1.5;
+    text-shadow: 3px 3px 0 #ff4400;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+}
+
+.retro-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+    background-image: url('https://static.vecteezy.com/system/resources/previews/022/010/146/non_2x/galaxy-with-stars-space-background-vector.jpg');  /* Add the image URL */
+    background-size: cover;  /* Ensures the image covers the full background */
+    background-position: center;
+    animation: moveBackground 30s linear infinite;  /* Moves the background image */
+}
+
+@keyframes moveBackground {
+    0% {
+        background-position: 0% 0%;  /* Starting position */
+    }
+    50% {
+        background-position: 100% 100%;  /* Move to the bottom-right */
+    }
+    100% {
+        background-position: 0% 0%;  /* Reset to the starting position */
+    }
+}
+
+.clock {
+    position: absolute;
+    top: 25%;  /* Keeps the clock a bit higher up on the screen */
+    left: 33.7%;  /* Moves the clock further to the left */
+    transform: translate(-50%, -50%);  /* Ensures the clock is centered relative to the new position */
+    width: 500px;  /* Smaller clock size */
+    height: 500px;  /* Smaller clock size */
+    border: 20px solid #ff8800;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation:
+        floatClock 4s ease-in-out infinite,
+        glowPulse 2s ease-in-out infinite,
+        gradientBG 10s ease infinite; /* Add gradient animation here */
+    background: linear-gradient(45deg, #ff6600, #ff8800, #ffaa00); /* Initial gradient (orange to yellow) */
+    z-index: 1;  /* Ensure the clock stays above the background */
+}
+
+@keyframes gradientBG {
+    0% {
+        background: linear-gradient(45deg, #ff6600, #ff8800, #ffaa00);
+    }
+    50% {
+        background: linear-gradient(45deg, #ff0000, #ff4400, #ff6600);
+    }
+    100% {
+        background: linear-gradient(45deg, #ff6600, #ff8800, #ffaa00);
+    }
+}
+
+
+
+
+
+
+
+
+
+.dot {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: yellow;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    z-index: 2;
+    border: 4px solid #ff6600;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dot {
+transition: transitionIn 0.75s; /* Or replace with 'opacity' if changing opacity */
+}
+
+
+.dot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 102, 0, 0.2);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dot:hover::before {
+    opacity: 1;
+}
+
+.dot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+/* Dot Positions */
+.dot:nth-child(1) { transform: rotate(0deg) translateY(-170px) rotate(0deg); }
+.dot:nth-child(3) { transform: rotate(45deg) translateY(-170px) rotate(-45deg); }
+.dot:nth-child(5) { transform: rotate(90deg) translateY(-170px) rotate(-90deg); }
+.dot:nth-child(7) { transform: rotate(135deg) translateY(-170px) rotate(-135deg); }
+.dot:nth-child(9) { transform: rotate(180deg) translateY(-170px) rotate(-180deg); }
+.dot:nth-child(11) { transform: rotate(225deg) translateY(-170px) rotate(-225deg); }
+.dot:nth-child(13) { transform: rotate(270deg) translateY(-170px) rotate(-270deg); }
+.dot:nth-child(15) { transform: rotate(315deg) translateY(-170px) rotate(-315deg); }
+
+.clock-hand {
+    position: absolute;
+    width: 8px;
+    height: 110px;
+    background: linear-gradient(to bottom, #ffee00, #ff4400);
+    top: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    animation: rotateHand 10s linear infinite;
+    z-index: 1;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.8);
+}
+
+.clock-hand::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ffee00;
+    border-radius: 50%;
+    top: -10px;
+    left: -6px;
+    box-shadow: 0 0 10px rgba(255, 238, 0, 0.8);
+}
+
+.game-title {
+    position: absolute;
+    width: 200px;
+    font-size: 1em;
+    color: #ffee00;
+    text-shadow:
+        2px 2px 0 #ff4400,
+        -2px -2px 0 #ff4400,
+        2px -2px 0 #ff4400,
+        -2px 2px 0 #ff4400;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 3;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #ff6600;
+}
+
+.dot:hover + .game-title {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#game-frame {
+    position: fixed;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    border: none;
+    transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #121212;
+    z-index: 10;
+}
+
+#game-frame.show {
+    left: 0;
+}
+
+
+/* Grid overlay */
+.grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(255, 68, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 68, 0, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(50px);
+    }
+}
