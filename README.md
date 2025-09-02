@@ -1,4 +1,5 @@
 # 🎮 DecadeDash: A Journey Through Gaming History
+**Check out the live web app here:** [https://decade-dash.vercel.app/](https://decade-dash.vercel.app/)
 
 **DecadeDash** is a retro-inspired web-based game that takes players on a time-traveling adventure through the history of video games — one iconic game per decade from the 1950s to the 2020s. The project was created for a hackathon with the theme **"Travelling Through Time"**.
 
